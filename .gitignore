@@ -2,8 +2,10 @@
 node_modules
 /dist
 
+# test results
 /tests/e2e/videos/
 /tests/e2e/screenshots/
+/coverage
 
 
 # local env files
