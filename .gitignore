@@ -2,11 +2,10 @@
 node_modules
 /dist
 
-# test results
+# Test results
 /tests/e2e/videos/
 /tests/e2e/screenshots/
 /coverage
-
 
 # local env files
 .env.local
@@ -26,3 +25,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Vercel private files
+.vercel
