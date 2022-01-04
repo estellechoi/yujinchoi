@@ -1,0 +1,69 @@
+name: Production Deployment
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+      - name: Repo checkout
+        uses: actions/checkout@v2
+        # Repo checkout under $GITHUB_WORKSPACE
+        
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          # cache: 'npm' ?
+          
+      - name: Install packages
+        run: yarn install
+                
+      - name: Deploy to Vercel Production 
+        id: vercel-production
+        uses: amondnet/vercel-action@v20
+        if: ${{ github.ref == 'refs/heads/master' }}
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_TL_ENGINE }}
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-args: '--prod'
+          
+      - name: Slack notification
+        if: ${{ always() }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          RECEIVER: ${{ secrets.PROD_DEPLOY_NOTIFICATION_RECEIVER_SLACK_NAME }}
+        uses: edge/simple-slack-notify@master
+        with: 
+          channel: '#notification'
+          username: 'CI/CD Bot'
+          status: ${{ job.status }}
+          success_text: |
+            '🎉 Production Deployment Success!
+            * vercel prod → ${{ steps.vercel-production.conclusion }}\n'
+          failure_text: |
+            '❌ Failed
+            * vercel prod → ${{ steps.vercel-production.conclusion }}\n'
+          cancelled_text: |
+            '❌ Cancelled
+            * vercel prod → ${{ steps.vercel-production.conclusion }}\n'
+          fields: |
+            [{ "title": "Repository", "value": "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}", "short": true },
+            { "title": "Ref", "value": "${env.GITHUB_REF_NAME}", "short": true },
+            { "title": "Workflow", "value": "${env.GITHUB_WORKFLOW}", "short": true },
+            { "title": "Job", "value": "${env.GITHUB_JOB}", "short": true },
+            { "title": "Actor", "value": "@${env.GITHUB_ACTOR}", "short": true },
+            { "title": "To", "value": "@${env.RECEIVER}", "short": true }]
