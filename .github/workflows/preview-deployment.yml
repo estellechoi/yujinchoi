@@ -19,10 +19,7 @@ jobs:
         uses: actions/checkout@v2
         with: 
           ref: develop
-        # Repo checkout under $GITHUB_WORKSPACE, doc at https://github.com/actions/checkout
-        
-      - name: Temp step to see checked-out branch
-        run: git rev-parse --abbrev-ref HEAD
+        # Repo checkout under $GITHUB_WORKSPACE, doc at https://github.com/actions/checkout        
         
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
