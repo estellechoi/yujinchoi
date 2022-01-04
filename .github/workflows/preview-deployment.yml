@@ -58,22 +58,23 @@ jobs:
         uses: edge/simple-slack-notify@master
         with: 
           channel: '#notification'
+          username: 'CI/CD Bot'
           status: ${{ job.status }}
           success_text: |
-            '🥳 Success!\n
-            unit test → ${{ steps.unittest.conclusion }}\n
-            e2e → ${{ steps.e2etest.conclusion }}'\n
+            '🥳 Success!
+            * unit test → ${{ steps.unittest.conclusion }}
+            * e2e → ${{ steps.e2etest.conclusion }}\n'
           failure_text: |
             '😭 Failed
-            unit test → ${{ steps.unittest.conclusion }}
-            e2e → ${{ steps.e2etest.conclusion }}'
+            * unit test → ${{ steps.unittest.conclusion }}
+            * e2e → ${{ steps.e2etest.conclusion }}\n'
           cancelled_text: |
             '😭 Cancelled
-            unit test → ${{ steps.unittest.conclusion }}
-            e2e → ${{ steps.e2etest.conclusion }}'
+            * unit test → ${{ steps.unittest.conclusion }}
+            * e2e → ${{ steps.e2etest.conclusion }}\n'
           fields: |
             [{ "title": "Repository", "value": "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}", "short": true },
             { "title": "Ref", "value": "${env.GITHUB_REF_NAME}", "short": true },
             { "title": "Workflow", "value": "${env.GITHUB_WORKFLOW}", "short": true },
             { "title": "Job", "value": "${env.GITHUB_JOB}", "short": true },
-            { "title": "Caller", "value": "@${env.GITHUB_ACTOR}", "short": true }]
+            { "title": "Actor", "value": "@${env.GITHUB_ACTOR}", "short": true }]
