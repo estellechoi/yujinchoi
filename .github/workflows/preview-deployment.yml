@@ -69,7 +69,7 @@ jobs:
           status: ${{ job.status }}
           success_text: '🥳 Success! unit test → ${{ steps.unittest.conclusion }} / e2e → ${{ steps.e2etest.conclusion }}'
           failure_text: '😭 Failed.. unit test → ${{ steps.unittest.conclusion }} / e2e → ${{ steps.e2etest.conclusion }}'
-          cancelled_text: '😶‍🌫️ Cancelled.. unit test → ${{ steps.unittest.conclusion }} / e2e → ${{ steps.e2etest.conclusion'
+          cancelled_text: '😶‍🌫️ Cancelled.. unit test → ${{ steps.unittest.conclusion }} / e2e → ${{ steps.e2etest.conclusion }}'
           fields: |
             [{ "title": "Repository", "value": "${env.GITHUB_REPOSITORY}", "short": true },
             { "title": "Ref", "value": "${env.GITHUB_REF}", "short": true },
