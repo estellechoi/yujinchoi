@@ -51,14 +51,6 @@ jobs:
         run: yarn test:unit
         continue-on-error: true
         
-      - name: Run e2e test against Vercel Preview
-        id: e2etest
-        env:
-          VERCEL_URL: ${{ steps.vercel-preview.outputs.preview-url }}
-          # see doc at https://github.com/amondnet/vercel-action#outputs
-        run: yarn test:e2e
-        continue-on-error: true
-
       - name: Slack notification
         if: ${{ always() }}
         env:
@@ -67,10 +59,21 @@ jobs:
         with: 
           channel: '#notification'
           status: ${{ job.status }}
-          success_text: '🥳 Success! unit test → ${{ steps.unittest.conclusion }} / e2e → ${{ steps.e2etest.conclusion }}'
-          failure_text: '😭 Failed.. unit test → ${{ steps.unittest.conclusion }} / e2e → ${{ steps.e2etest.conclusion }}'
-          cancelled_text: '😶‍🌫️ Cancelled.. unit test → ${{ steps.unittest.conclusion }} / e2e → ${{ steps.e2etest.conclusion }}'
+          success_text: |
+            '🥳 Success!\n
+            unit test → ${{ steps.unittest.conclusion }}\n
+            e2e → ${{ steps.e2etest.conclusion }}'\n
+          failure_text: |
+            '😭 Failed
+            unit test → ${{ steps.unittest.conclusion }}
+            e2e → ${{ steps.e2etest.conclusion }}'
+          cancelled_text: |
+            '😭 Cancelled
+            unit test → ${{ steps.unittest.conclusion }}
+            e2e → ${{ steps.e2etest.conclusion }}'
           fields: |
-            [{ "title": "Repository", "value": "${env.GITHUB_REPOSITORY}", "short": true },
-            { "title": "Ref", "value": "${env.GITHUB_REF}", "short": true },
-            { "title": "Caller", "value": "@${{ env.GITHUB_ACTOR }}", "short": true }]
+            [{ "title": "Repository", "value": "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}", "short": true },
+            { "title": "Ref", "value": "${env.GITHUB_REF_NAME}", "short": true },
+            { "title": "Workflow", "value": "${env.GITHUB_WORKFLOW}", "short": true },
+            { "title": "Job", "value": "${env.GITHUB_JOB}", "short": true },
+            { "title": "Caller", "value": "@${env.GITHUB_ACTOR}", "short": true }]
