@@ -2,7 +2,7 @@ name: Preview Deployment
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [develop]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -17,79 +17,73 @@ jobs:
     steps:
       - name: Repo checkout
         uses: actions/checkout@v2
-        with: 
+        with:
           ref: develop
-        # Repo checkout under $GITHUB_WORKSPACE, doc at https://github.com/actions/checkout        
-        
+        # Repo checkout under $GITHUB_WORKSPACE, doc at https://github.com/actions/checkout
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          
+
       - name: Install packages
         run: yarn install
-        
+
+      - name: Set envs
+        env:
+          APP_ENV_SET: ${{ secrets.APP_ENV_SET || '' }}
+        run: |
+          echo "${APP_ENV_SET}" > .env
+          cat .env
+
+      - name: Run unit test
+        id: unit-test
+        run: yarn test:unit
+        continue-on-error: true
+
+      - name: Run e2e test
+        id: e2e-test
+        run: yarn test:e2e
+        continue-on-error: true
+
       - name: Deploy to Vercel Preview
         id: vercel-preview
+        if: ${{ success() }}
         uses: amondnet/vercel-action@v20
-        if: ${{ github.event_name == 'pull_request' && github.ref == 'refs/heads/develop' }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           scope: ${{ secrets.VERCEL_ORG_ID }}
-          # vercel-args: '--prod'
-          
-      - name: Run unit test against Vercel Preview
-        id: unittest
-        env:
-          VERCEL_URL: ${{ steps.vercel-preview.outputs.preview-url }}
-          # see doc at https://github.com/amondnet/vercel-action#outputs
-        run: yarn test:unit
-        continue-on-error: true
-        
+          # vercel-args: '--prod' (this is for production deployment)
+
       - name: Slack notification
         if: ${{ always() }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          VERCEL_URL: ${{ steps.vercel-preview.outputs.preview-url }}
+          # see doc at https://github.com/amondnet/vercel-action#outputs
         uses: edge/simple-slack-notify@master
-        with: 
-          channel: '#notification'
-          username: 'CI/CD Bot'
+        with:
+          channel: "#notification"
+          username: "CI/CD Bot"
           status: ${{ job.status }}
           success_text: |
-            '🥳 Success!
-            * unit test → ${{ steps.unittest.conclusion }}
-            * e2e → ${{ steps.e2etest.conclusion }}\n'
+            🥳 Success!
+            * unit test → ${{ steps.unit-test.conclusion }}
+            * e2e → ${{ steps.e2e-test.conclusion }}\n
           failure_text: |
-            '😭 Failed
-            * unit test → ${{ steps.unittest.conclusion }}
-            * e2e → ${{ steps.e2etest.conclusion }}\n'
+            😭 Failed
+            * unit test → ${{ steps.unit-test.conclusion }}
+            * e2e → ${{ steps.e2e-test.conclusion }}\n
           cancelled_text: |
-            '😭 Cancelled
-            * unit test → ${{ steps.unittest.conclusion }}
-            * e2e → ${{ steps.e2etest.conclusion }}\n'
+            😭 Cancelled
+            * unit test → ${{ steps.unit-test.conclusion }}
+            * e2e → ${{ steps.e2e-test.conclusion }}\n
           fields: |
             [{ "title": "Repository", "value": "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}", "short": true },
             { "title": "Ref", "value": "${env.GITHUB_REF_NAME}", "short": true },
             { "title": "Workflow", "value": "${env.GITHUB_WORKFLOW}", "short": true },
             { "title": "Job", "value": "${env.GITHUB_JOB}", "short": true },
-            { "title": "Actor", "value": "@${env.GITHUB_ACTOR}", "short": true }]
-            
-  pushtomaster:
-    needs: deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Repo checkout
-        uses: actions/checkout@v2
-        with: 
-          ref: develop
-
-      - name: Push to master
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git checkout master
-          git rev-parse --abbrev-ref HEAD
-          git merge develop
-          git push origin master
+            { "title": "Actor", "value": "@${env.GITHUB_ACTOR}", "short": true },
+            { "title": "Deployed URL", "value": "${env.VERCEL_URL}" }]
