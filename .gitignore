@@ -19,7 +19,7 @@ pnpm-debug.log*
 
 # Editor directories and files
 .idea
-.vscode
+# .vscode → commented to share this file b/w locals
 *.suo
 *.ntvs*
 *.njsproj
