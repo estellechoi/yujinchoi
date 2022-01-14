@@ -19,7 +19,7 @@ $typography-type-scale: (
 
 @mixin font-size($sizeValue) {
     font-size: $sizeValue + px; /* fallback for old browsers */
-    font-size: (0.125 / 2 * $sizeValue) + rem; /* rem from px */
+    font-size: (calc(0.125 / 2) * $sizeValue) + rem; /* rem from px */
 }
 
 @mixin typography-got-rhythm($level: 0) {
