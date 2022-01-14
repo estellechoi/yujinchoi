@@ -4,6 +4,9 @@ import { State } from './index'
 
 export type Getters = {
 	getDisplayDateTime(state: State): State['displayDateTime']
+	getDisplayHours(state: State): number
+	getDisplayMinutes(state: State): number
+	getDisplaySeconds(state: State): number
 }
 
 const getters: GetterTree<State, RootState> & Getters = {
