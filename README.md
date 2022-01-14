@@ -1,34 +1,33 @@
 # yujinchoi
 
-## Project setup
+### 1. Install yarn if needed 
+```
+# yarn not installed yet, install it
+npm install yarn -g
+```
+
+### 2.Install packages
+
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### 3. Compiles and hot-reloads in development mode
 ```
 yarn serve
 ```
 
-### Compiles and minifies for production
+### 4. Compiles and minifies for production (if you want)
 ```
 yarn build
 ```
 
-### Run your unit tests
+### 5. Install `serve` globally to serve built output
 ```
-yarn test:unit
-```
-
-### Run your end-to-end tests
-```
-yarn test:e2e
+yarn global add serve
 ```
 
-### Lints and fixes files
+### 6. Serve production output
 ```
-yarn lint
+serve dist
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
