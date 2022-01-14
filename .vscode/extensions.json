@@ -1,9 +1,10 @@
 {
-    "recommendations": [
-        "octref.vetur",
-        "sdras.vue-vscode-snippets",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "mrmlnc.vscode-scss"
-    ]
+	"recommendations": [
+		"octref.vetur",
+		"sdras.vue-vscode-snippets",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"mrmlnc.vscode-scss",
+		"ms-azuretools.vscode-docker"
+	]
 }
