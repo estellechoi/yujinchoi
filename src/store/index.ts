@@ -1,13 +1,11 @@
-// import dateStore from '@/store/modules/date'
+import { State as DateState, store as date } from '@/store/modules/date/index'
 import { createStore } from 'vuex'
 
-// export interface RootState {
-// 	DateStore: dateStore
-// }
+export interface RootState {
+	date: DateState
+}
 
 export default createStore({
-	// modules: { dateStore },
-	state: {},
-	mutations: {},
-	actions: {},
+	modules: { date },
+	strict: process.env.NODE_ENV !== 'production',
 })
