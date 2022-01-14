@@ -11,9 +11,6 @@
 		"lint:prettier": "prettier --write --loglevel warn",
 		"help": "vue-cli-service help"
 	},
-	"gitHooks": {
-		"pre-commit": "lint-staged"
-	},
 	"dependencies": {
 		"core-js": "^3.6.5",
 		"register-service-worker": "^1.7.1",
