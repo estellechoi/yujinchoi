@@ -1,6 +1,7 @@
 <template>
 	<div :class="$style.layout">
 		<Clock
+			data-test="clock"
 			:class="$style.clock"
 			:time="new Date()"
 			:size="200"
@@ -14,6 +15,7 @@
 		/>
 		<Tooltip
 			v-if="isTooltipVisible"
+			data-test="tooltip"
 			:label="tooltipLabel"
 			:class="$style.tooltip"
 			:style="tooltipCSSText"
