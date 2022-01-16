@@ -1,15 +1,17 @@
 export type ClockType = 'hours' | 'minutes' | 'seconds'
 
-export type ClockMeta = {
+export type ClockSize = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800
+
+export type ClockUtilMeta = {
 	[index: string]: string | number
 	unitDeg: number
 	label: string
 	className: string
 }
 
-export type ClockData = {
-	[index: string]: ClockMeta
-	hours: ClockMeta
-	minutes: ClockMeta
-	seconds: ClockMeta
+export type ClockUtils = {
+	[index: string]: ClockUtilMeta
+	hours: ClockUtilMeta
+	minutes: ClockUtilMeta
+	seconds: ClockUtilMeta
 }
