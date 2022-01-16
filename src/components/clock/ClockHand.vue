@@ -63,7 +63,7 @@
 
 				switch (this.type) {
 					case 'hours':
-						time = hours + minutes / 60 + seconds / 60 / 60
+						time = hours + minutes / 60 + seconds / 360
 						break
 					case 'minutes':
 						time = minutes + seconds / 60
@@ -72,7 +72,7 @@
 						time = seconds
 						break
 					default:
-						time = hours + minutes / 60 + seconds / 60 / 60
+						time = hours + minutes / 60 + seconds / 360
 				}
 				return time
 			},

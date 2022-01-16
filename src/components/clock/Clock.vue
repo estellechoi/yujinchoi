@@ -121,10 +121,6 @@
 		.clockWall,
 		.clockHand {
 			position: absolute;
-		}
-
-		.clockWall,
-		.clockHand {
 			pointer-events: none;
 		}
 
