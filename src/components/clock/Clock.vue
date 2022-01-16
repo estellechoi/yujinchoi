@@ -1,39 +1,17 @@
 <template>
 	<div :style="clockWrapperCSSText">
-		<div
-			:class="$style.clock"
-			@mouseover="showTooltip"
-			@mousemove="updateTooltipOffset"
-			@mouseout="hideTooltip"
-			@mouseleave="hideTooltip"
-		>
+		<div :class="$style.clock">
 			<div :class="$style.clockWall">
-				<ClockHand
-					:class="$style.clockHand"
-					type="hours"
-					:time="getClockTime"
-					:size="clockHandSize"
-				/>
-				<ClockHand
-					:class="$style.clockHand"
-					type="minutes"
-					:time="getClockTime"
-					:size="clockHandSize"
-				/>
-				<ClockHand
-					:class="$style.clockHand"
-					type="seconds"
-					:time="getClockTime"
-					:size="clockHandSize"
-				/>
+				<div v-for="(item, index) in clockHandMetas" :key="index">
+					<ClockHand
+						v-if="item.show"
+						:class="$style.clockHand"
+						:type="item.type"
+						:time="getClockTime"
+						:size="clockHandSize"
+					/>
+				</div>
 			</div>
-			<Tooltip
-				v-show="isTooltipVisible"
-				:label="tooltipLabel"
-				:class="$style.tooltip"
-				:style="tooltipCSSText"
-				aria-hidden="true"
-			/>
 		</div>
 	</div>
 </template>
@@ -42,13 +20,12 @@
 	import { defineComponent, PropType } from 'vue'
 	import { mapGetters } from 'vuex'
 	import ClockHand from '@/components/clock/ClockHand.vue' // @ is an alias to /src
-	import Tooltip from '@/components/tooltip/Tooltip.vue' // @ is an alias to /src
-	import { ClockSize } from '@/components/clock/types'
+	import { ClockSize, ClockHandMeta } from '@/components/clock/types'
 	import utils from '@/utils/index'
 
 	export default defineComponent({
 		name: 'Clock',
-		components: { ClockHand, Tooltip },
+		components: { ClockHand },
 		props: {
 			time: {
 				type: Date,
@@ -62,31 +39,43 @@
 				type: Number as PropType<ClockSize>,
 				default: 200,
 			},
+			showMinuteHand: {
+				type: Boolean as PropType<boolean>,
+				default: false,
+			},
+			showSecondHand: {
+				type: Boolean as PropType<boolean>,
+				default: false,
+			},
 		},
 		data() {
 			return {
 				interval: 0,
-				isTooltipVisible: false,
-				tooltipX: 0,
-				tooltipY: 0,
 			}
 		},
 		computed: {
 			...mapGetters('clock', ['getClockTime']),
+			clockHandMetas(): ClockHandMeta[] {
+				return [
+					{
+						type: 'hours',
+						show: true,
+					},
+					{
+						type: 'minutes',
+						show: this.showMinuteHand,
+					},
+					{
+						type: 'seconds',
+						show: this.showSecondHand,
+					},
+				]
+			},
 			clockWrapperCSSText(): string {
 				return `width: ${this.size}px`
 			},
 			clockHandSize(): number {
 				return this.size / 50
-			},
-			tooltipLabel(): string {
-				return `${this.getClockTime}`
-			},
-			tooltipCSSText(): string {
-				const MARGIN = 30
-				const tooltipX = this.tooltipY - MARGIN
-				const tooltipY = this.tooltipX + MARGIN
-				return `top: ${tooltipX}px; left: ${tooltipY}px;`
 			},
 		},
 		created() {
@@ -113,16 +102,6 @@
 			clearClockInterval() {
 				window.clearInterval(this.interval)
 			},
-			updateTooltipOffset(evt: MouseEvent) {
-				this.tooltipX = evt.offsetX
-				this.tooltipY = evt.offsetY
-			},
-			showTooltip() {
-				this.isTooltipVisible = true
-			},
-			hideTooltip() {
-				this.isTooltipVisible = false
-			},
 		},
 	})
 </script>
@@ -133,8 +112,6 @@
 	.clock {
 		position: relative;
 		width: 100%;
-		height: 0;
-		padding-bottom: 100%;
 		aspect-ratio: 1;
 		background: $color-white;
 		border-radius: 50%;
@@ -142,8 +119,7 @@
 		overflow: visible;
 
 		.clockWall,
-		.clockHand,
-		.tooltip {
+		.clockHand {
 			position: absolute;
 		}
 
@@ -176,10 +152,6 @@
 		.clockHand {
 			bottom: 50%;
 			left: 50%;
-		}
-
-		.tooltip {
-			z-index: 2;
 		}
 	}
 </style>
