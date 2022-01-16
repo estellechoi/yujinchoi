@@ -2,9 +2,22 @@
 	<div :class="$style.layout">
 		<Clock
 			:class="$style.clock"
-			:hours="getDisplayHours"
-			:minutes="getDisplayMinutes"
-			:seconds="getDisplaySeconds"
+			:time="new Date()"
+			:size="200"
+			:is-live="true"
+			:show-minute-hand="true"
+			:show-second-hand="true"
+			@mouseover="showTooltip"
+			@mousemove="updateTooltipPosition"
+			@mouseout="hideTooltip"
+			@mouseleave="hideTooltip"
+		/>
+		<Tooltip
+			v-if="isTooltipVisible"
+			:label="tooltipLabel"
+			:class="$style.tooltip"
+			:style="tooltipCSSText"
+			aria-hidden="true"
 		/>
 	</div>
 </template>
@@ -12,39 +25,41 @@
 <script lang="ts">
 	import { defineComponent } from 'vue'
 	import { mapGetters } from 'vuex'
+	import Tooltip from '@/components/tooltip/Tooltip.vue' // @ is an alias to /src
 	import Clock from '@/components/clock/Clock.vue'
 
 	export default defineComponent({
 		name: 'Home',
-		components: { Clock },
-		computed: {
-			...mapGetters('date', [
-				'getDisplayHours',
-				'getDisplayMinutes',
-				'getDisplaySeconds',
-			]),
+		components: { Clock, Tooltip },
+		data() {
+			return {
+				isTooltipVisible: false,
+				tooltipX: 0,
+				tooltipY: 0,
+			}
 		},
-		created() {
-			this.startClockInterval()
+		computed: {
+			...mapGetters('clock', ['getClockTime']),
+			tooltipLabel(): string {
+				return `${this.getClockTime}`
+			},
+			tooltipCSSText(): string {
+				const MARGIN = 30
+				const tooltipX = this.tooltipY - MARGIN
+				const tooltipY = this.tooltipX + MARGIN
+				return `top: ${tooltipX}px; left: ${tooltipY}px;`
+			},
 		},
 		methods: {
-			startClockInterval() {
-				window.setInterval(() => {
-					this.updateDisplayDateTime()
-				}, 1000)
+			updateTooltipPosition(evt: MouseEvent) {
+				this.tooltipX = evt.clientX
+				this.tooltipY = evt.clientY
 			},
-			updateDisplayDateTime() {
-				this.$store.commit(
-					'date/SET_DISPLAY_DATE_TIME',
-					this.getCurrentKorDateTime()
-				)
+			showTooltip() {
+				this.isTooltipVisible = true
 			},
-			getCurrentKorDateTime(): Date {
-				const now = new Date()
-				const utcNow = now.getTime() + now.getTimezoneOffset() * 60 * 1000
-				const KOR_TIME_DIFF = 9 * 60 * 60 * 1000
-				const korNow = new Date(utcNow + KOR_TIME_DIFF)
-				return korNow
+			hideTooltip() {
+				this.isTooltipVisible = false
 			},
 		},
 	})
@@ -52,9 +67,6 @@
 
 <style lang="scss" module>
 	@import '@/styles/index';
-
-	$clock-size: $size-4 * 10;
-	$clock-hand-size: $size-1;
 
 	.layout {
 		width: 100vw;
@@ -64,11 +76,12 @@
 		align-items: center;
 
 		.clock {
-			width: $clock-size;
-			height: $clock-size;
-			font-size: $clock-hand-size;
 			margin: 0 auto;
 			transform: translateY(-$size-6);
+		}
+
+		.tooltip {
+			position: absolute;
 		}
 	}
 </style>

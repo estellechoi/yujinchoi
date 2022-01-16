@@ -1,17 +1,14 @@
 <template>
-	<div
-		:class="[$style.clockHand, $style[classNameByType]]"
-		:style="degreeCSSText"
-	>
+	<div :class="[$style.clockHand, $style[classNameByType]]" :style="CSSText">
 		<span :class="$style.clockHandLabel" aria-live="polite">{{ label }}</span>
 	</div>
 </template>
 
 <script lang="ts">
 	import { defineComponent, PropType } from 'vue'
-	import { ClockType, ClockData } from './types'
+	import { ClockType, ClockUtils } from './types'
 
-	const clockData: ClockData = {
+	const clockUtils: ClockUtils = {
 		hours: {
 			unitDeg: 30,
 			label: '시',
@@ -36,9 +33,13 @@
 				type: String as PropType<ClockType>,
 				required: true,
 			},
-			value: {
+			size: {
 				type: Number as PropType<number>,
-				default: 0,
+				required: true,
+			},
+			time: {
+				type: Date as PropType<Date>,
+				default: new Date(),
 			},
 		},
 		data() {
@@ -54,16 +55,43 @@
 			},
 		},
 		computed: {
-			classNameByType(): string {
-				return clockData[this.type].className
+			value(): number {
+				const hours = this.time.getHours()
+				const minutes = this.time.getMinutes()
+				const seconds = this.time.getSeconds()
+				let time: number
+
+				switch (this.type) {
+					case 'hours':
+						time = hours + minutes / 60 + seconds / 360
+						break
+					case 'minutes':
+						time = minutes + seconds / 60
+						break
+					case 'seconds':
+						time = seconds
+						break
+					default:
+						time = hours + minutes / 60 + seconds / 360
+				}
+				return time
 			},
-			degreeCSSText(): string {
-				const unitDeg = clockData[this.type].unitDeg
+			degCSSText(): string {
+				const unitDeg = clockUtils[this.type].unitDeg
 				const deg = unitDeg * (this.accmValue + this.value)
 				return `transform: rotateZ(${deg}deg)`
 			},
+			sizeCSSText(): string {
+				return `font-size: ${this.size}px`
+			},
+			CSSText(): string {
+				return `${this.degCSSText};${this.sizeCSSText}`
+			},
+			classNameByType(): string {
+				return clockUtils[this.type].className
+			},
 			label(): string {
-				return `${this.value}${clockData[this.type].label}`
+				return `${Math.floor(this.value)}${clockUtils[this.type].label}`
 			},
 		},
 	})
@@ -73,7 +101,6 @@
 	@import '@/styles/index';
 
 	.clockHand {
-		// font-size: 1px;
 		width: 1em;
 		height: 8em;
 		background: $color-primary;
@@ -83,12 +110,12 @@
 		transition: transform 0.4s linear;
 
 		&.clockHandMin {
-			height: 12em;
+			height: 14em;
 		}
 
 		&.clockHandSec {
-			width: 0.6em;
-			height: 12em;
+			width: 0.4em;
+			height: 16em;
 		}
 
 		.clockHandLabel {

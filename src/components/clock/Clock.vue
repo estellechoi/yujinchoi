@@ -1,76 +1,106 @@
 <template>
-	<div
-		:class="$style.clock"
-		@mouseover="showTooltip"
-		@mousemove="updateTooltipOffset"
-		@mouseout="hideTooltip"
-		@mouseleave="hideTooltip"
-	>
-		<ClockHand :class="$style.clockHand" type="hours" :value="hours" />
-		<ClockHand :class="$style.clockHand" type="minutes" :value="minutes" />
-		<ClockHand :class="$style.clockHand" type="seconds" :value="seconds" />
-		<Tooltip
-			v-show="isTooltipVisible"
-			:label="tooltipLabel"
-			:class="$style.tooltip"
-			:style="tooltipCSSText"
-			aria-hidden="true"
-		/>
+	<div :style="clockWrapperCSSText">
+		<div :class="$style.clock">
+			<div :class="$style.clockWall">
+				<div v-for="(item, index) in clockHandMetas" :key="index">
+					<ClockHand
+						v-if="item.show"
+						:class="$style.clockHand"
+						:type="item.type"
+						:time="getClockTime"
+						:size="clockHandSize"
+					/>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script lang="ts">
 	import { defineComponent, PropType } from 'vue'
+	import { mapGetters } from 'vuex'
 	import ClockHand from '@/components/clock/ClockHand.vue' // @ is an alias to /src
-	import Tooltip from '@/components/tooltip/Tooltip.vue' // @ is an alias to /src
+	import { ClockSize, ClockHandMeta } from '@/components/clock/types'
+	import utils from '@/utils/index'
 
 	export default defineComponent({
-		setup() {
-			return {}
-		},
-		components: { ClockHand, Tooltip },
+		name: 'Clock',
+		components: { ClockHand },
 		props: {
-			hours: {
-				type: Number as PropType<number>,
-				default: 0,
+			time: {
+				type: Date,
+				default: new Date(),
 			},
-			minutes: {
-				type: Number as PropType<number>,
-				default: 0,
+			isLive: {
+				type: Boolean as PropType<boolean>,
+				default: false,
 			},
-			seconds: {
-				type: Number as PropType<number>,
-				default: 0,
+			size: {
+				type: Number as PropType<ClockSize>,
+				default: 200,
+			},
+			showMinuteHand: {
+				type: Boolean as PropType<boolean>,
+				default: false,
+			},
+			showSecondHand: {
+				type: Boolean as PropType<boolean>,
+				default: false,
 			},
 		},
 		data() {
 			return {
-				isTooltipVisible: false,
-				tooltipX: 0,
-				tooltipY: 0,
+				interval: 0,
 			}
 		},
 		computed: {
-			tooltipLabel(): string {
-				return `${this.hours} : ${this.minutes} : ${this.seconds} KST`
+			...mapGetters('clock', ['getClockTime']),
+			clockHandMetas(): ClockHandMeta[] {
+				return [
+					{
+						type: 'hours',
+						show: true,
+					},
+					{
+						type: 'minutes',
+						show: this.showMinuteHand,
+					},
+					{
+						type: 'seconds',
+						show: this.showSecondHand,
+					},
+				]
 			},
-			tooltipCSSText(): string {
-				const MARGIN = 20
-				const tooltipX = this.tooltipY - MARGIN
-				const tooltipY = this.tooltipX + MARGIN
-				return `top: ${tooltipX}px; left: ${tooltipY}px;`
+			clockWrapperCSSText(): string {
+				return `width: ${this.size}px`
+			},
+			clockHandSize(): number {
+				return this.size / 50
 			},
 		},
+		created() {
+			this.initClock()
+		},
+		beforeUnmounted() {
+			if (this.interval) this.clearClockInterval()
+		},
 		methods: {
-			updateTooltipOffset(evt: MouseEvent) {
-				this.tooltipX = evt.offsetX
-				this.tooltipY = evt.offsetY
+			initClock() {
+				this.updateTime(this.time)
+				if (this.isLive) this.startClockInterval(this.time)
 			},
-			showTooltip() {
-				this.isTooltipVisible = true
+			startClockInterval(startTime: Date) {
+				let currentTime = startTime
+				this.interval = window.setInterval(() => {
+					currentTime = utils.getTimeAdded(currentTime, 1, 'second')
+					this.updateTime(currentTime)
+				}, 1000)
 			},
-			hideTooltip() {
-				this.isTooltipVisible = false
+			updateTime(newTime: Date) {
+				this.$store.commit('clock/SET_CLOCK_TIME', newTime)
+			},
+			clearClockInterval() {
+				window.clearInterval(this.interval)
 			},
 		},
 	})
@@ -82,7 +112,6 @@
 	.clock {
 		position: relative;
 		width: 100%;
-		height: 100%;
 		aspect-ratio: 1;
 		background: $color-white;
 		border-radius: 50%;
@@ -90,9 +119,30 @@
 		overflow: visible;
 
 		.clockWall,
-		.clockHand,
-		.tooltip {
+		.clockHand {
 			position: absolute;
+			pointer-events: none;
+		}
+
+		.clockWall {
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			&::after {
+				position: relative;
+				z-index: 2;
+				content: '';
+				width: 6%;
+				height: 6%;
+				background: $color-white;
+				box-shadow: $box-shadow-black-deep;
+				border-radius: 50%;
+			}
 		}
 
 		.clockHand {

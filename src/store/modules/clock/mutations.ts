@@ -3,12 +3,12 @@ import { State } from './index'
 import { MutationTypes } from './mutation-types'
 
 type Mutations<S = State> = {
-	[MutationTypes.SET_DISPLAY_DATE_TIME](state: S, payload: Date): void
+	[MutationTypes.SET_CLOCK_TIME](state: S, payload: Date): void
 }
 
 const mutations: MutationTree<State> & Mutations = {
-	[MutationTypes.SET_DISPLAY_DATE_TIME](state, payload) {
-		state.displayDateTime = payload
+	[MutationTypes.SET_CLOCK_TIME](state, payload) {
+		state.clockTime = payload
 	},
 }
 

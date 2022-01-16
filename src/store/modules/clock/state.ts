@@ -1,7 +1,7 @@
 import { State } from './index'
 
 const state = (): State => ({
-	displayDateTime: new Date(),
+	clockTime: new Date(),
 })
 
 export default state

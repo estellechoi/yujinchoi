@@ -5,7 +5,7 @@ import mutations from './mutations'
 import state from './state'
 
 export interface State {
-	displayDateTime: Date
+	clockTime: Date
 }
 
 export const store: Module<State, RootState> = {
