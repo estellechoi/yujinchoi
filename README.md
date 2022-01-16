@@ -2,6 +2,8 @@
 
 ### 0. Preview
 
+To see preview-deployed, click [here](https://yujinchoi-bs6s02068-estellechoi.vercel.app/).
+
 ![미리보기](./docs/img/clock-overview.png)
 
 ### 1. Install yarn if needed

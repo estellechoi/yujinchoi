@@ -68,16 +68,13 @@ jobs:
           status: ${{ job.status }}
           success_text: |
             🥳 Success!
-            * unit test → ${{ steps.unit-test.conclusion }}
-            * e2e → ${{ steps.e2e-test.conclusion }}\n
+            * unit test → ${{ steps.unit-test.conclusion }}\n
           failure_text: |
             😭 Failed
-            * unit test → ${{ steps.unit-test.conclusion }}
-            * e2e → ${{ steps.e2e-test.conclusion }}\n
+            * unit test → ${{ steps.unit-test.conclusion }}\n
           cancelled_text: |
             😭 Cancelled
-            * unit test → ${{ steps.unit-test.conclusion }}
-            * e2e → ${{ steps.e2e-test.conclusion }}\n
+            * unit test → ${{ steps.unit-test.conclusion }}\n
           fields: |
             [{ "title": "Repository", "value": "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}", "short": true },
             { "title": "Ref", "value": "${env.GITHUB_REF_NAME}", "short": true },
