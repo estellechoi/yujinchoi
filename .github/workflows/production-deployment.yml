@@ -30,6 +30,13 @@ jobs:
       - name: Install packages
         run: yarn install
                 
+      - name: Set envs
+        env:
+          APP_ENV_SET: ${{ secrets.APP_ENV_SET || '' }}
+        run: |
+          echo "${APP_ENV_SET}" > .env
+          cat .env
+      
       - name: Deploy to Vercel Production 
         id: vercel-production
         uses: amondnet/vercel-action@v20
@@ -52,14 +59,14 @@ jobs:
           username: 'CI/CD Bot'
           status: ${{ job.status }}
           success_text: |
-            '🎉 Production Deployment Success!
-            * vercel prod → ${{ steps.vercel-production.conclusion }}\n'
+            🎉 Production Deployment Success!
+            * vercel prod → ${{ steps.vercel-production.conclusion }}\n
           failure_text: |
-            '❌ Failed
-            * vercel prod → ${{ steps.vercel-production.conclusion }}\n'
+            ❌ Failed
+            * vercel prod → ${{ steps.vercel-production.conclusion }}\n
           cancelled_text: |
-            '❌ Cancelled
-            * vercel prod → ${{ steps.vercel-production.conclusion }}\n'
+            ❌ Cancelled
+            * vercel prod → ${{ steps.vercel-production.conclusion }}\n
           fields: |
             [{ "title": "Repository", "value": "${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}", "short": true },
             { "title": "Ref", "value": "${env.GITHUB_REF_NAME}", "short": true },
