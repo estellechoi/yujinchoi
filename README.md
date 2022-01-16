@@ -1,6 +1,11 @@
 # yujinchoi
 
-### 1. Install yarn if needed 
+### 0. Preview
+
+![미리보기](./docs/img/clock-overview.png)
+
+### 1. Install yarn if needed
+
 ```zsh
 # yarn not installed yet, install it
 npm install yarn -g
