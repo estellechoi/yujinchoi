@@ -1,6 +1,9 @@
 name: Preview Deployment
 
 on:
+  # tmp while i work on this project alone
+  push:
+    branches: [develop]
   pull_request:
     branches: [develop]
 
