@@ -1,11 +1,14 @@
-import { State as DateState, store as date } from '@/store/modules/date/index'
+import {
+	State as ClockState,
+	store as clock,
+} from '@/store/modules/clock/index'
 import { createStore } from 'vuex'
 
 export interface RootState {
-	date: DateState
+	clock: ClockState
 }
 
 export default createStore({
-	modules: { date },
+	modules: { clock },
 	strict: process.env.NODE_ENV !== 'production',
 })

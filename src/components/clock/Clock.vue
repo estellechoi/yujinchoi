@@ -11,19 +11,19 @@
 				<ClockHand
 					:class="$style.clockHand"
 					type="hours"
-					:time="getDisplayDateTime"
+					:time="getClockTime"
 					:size="clockHandSize"
 				/>
 				<ClockHand
 					:class="$style.clockHand"
 					type="minutes"
-					:time="getDisplayDateTime"
+					:time="getClockTime"
 					:size="clockHandSize"
 				/>
 				<ClockHand
 					:class="$style.clockHand"
 					type="seconds"
-					:time="getDisplayDateTime"
+					:time="getClockTime"
 					:size="clockHandSize"
 				/>
 			</div>
@@ -72,7 +72,7 @@
 			}
 		},
 		computed: {
-			...mapGetters('clock', ['getDisplayDateTime']),
+			...mapGetters('clock', ['getClockTime']),
 			clockWrapperCSSText(): string {
 				return `width: ${this.size}px`
 			},
@@ -80,7 +80,7 @@
 				return this.size / 50
 			},
 			tooltipLabel(): string {
-				return `${this.getDisplayDateTime}`
+				return `${this.getClockTime}`
 			},
 			tooltipCSSText(): string {
 				const MARGIN = 30
