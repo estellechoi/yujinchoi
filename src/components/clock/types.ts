@@ -4,7 +4,7 @@ export type ClockSize = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800
 
 export type ClockHandMeta = {
 	[index: string]: string | boolean
-	type: string
+	type: ClockType
 	show: boolean
 }
 
