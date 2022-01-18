@@ -19,7 +19,11 @@
 <script lang="ts">
 	import { defineComponent, PropType } from 'vue'
 	import ClockHand from '@/components/clock/ClockHand.vue' // @ is an alias to /src
-	import { ClockSize, ClockHandMeta } from '@/components/clock/types'
+	import {
+		ClockSize,
+		ClockUpdateEmit,
+		ClockHandMeta,
+	} from '@/components/clock/types'
 	import utils from '@/utils/index'
 
 	export default defineComponent({
@@ -78,8 +82,8 @@
 			},
 		},
 		emits: {
-			update(payload: { newTime: Date }) {
-				return payload.newTime
+			update(payload: ClockUpdateEmit) {
+				return payload
 			},
 		},
 		created() {

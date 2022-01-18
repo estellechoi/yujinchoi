@@ -30,6 +30,7 @@
 	import { mapGetters } from 'vuex'
 	import Tooltip from '@/components/tooltip/Tooltip.vue' // @ is an alias to /src
 	import Clock from '@/components/clock/Clock.vue'
+	import { ClockUpdateEmit } from '@/components/clock/types'
 
 	export default defineComponent({
 		name: 'Home',
@@ -54,8 +55,8 @@
 			},
 		},
 		methods: {
-			handleClockUpdate(data: { newTime: Date }) {
-				this.$store.commit('clock/SET_CLOCK_TIME', data.newTime)
+			handleClockUpdate(payload: ClockUpdateEmit) {
+				this.$store.commit('clock/SET_CLOCK_TIME', payload.newTime)
 			},
 			updateTooltipPosition(evt: MouseEvent) {
 				this.tooltipX = evt.clientX

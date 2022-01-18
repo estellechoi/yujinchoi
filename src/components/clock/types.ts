@@ -2,6 +2,10 @@ export type ClockType = 'hours' | 'minutes' | 'seconds'
 
 export type ClockSize = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800
 
+export interface ClockUpdateEmit {
+	newTime: Date
+}
+
 export interface ClockHandMeta {
 	type: ClockType
 	show: boolean
