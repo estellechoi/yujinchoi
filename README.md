@@ -1,40 +1,46 @@
-# yujinchoi
+# YujinChoi
 
-### 0. Preview
+## 1. Overview
 
-To see preview-deployed, click [here](https://yujinchoi-bs6s02068-estellechoi.vercel.app/).
+This project is written in Vue3 + TypeScript. To see the preview-deployed, click [here](https://yujinchoi-bs6s02068-estellechoi.vercel.app/).
 
 ![미리보기](./docs/img/clock-overview.png)
 
-### 1. Install yarn if needed
+## 2. Run
+
+### Install yarn
 
 ```zsh
 # yarn not installed yet, install it
 npm install yarn -g
 ```
 
-### 2.Install packages
+### Install packages
 
 ```zsh
 yarn install
 ```
 
-### 3. Compiles and hot-reloads in development mode
+### Compile and hot-reload in development mode
+
 ```zsh
 yarn serve
 ```
 
-### 4. Compiles and minifies for production (if you want)
+### Compile and minify for production (if you want)
+
 ```zsh
 yarn build
 ```
 
-### 5. Install `serve` globally to serve built output
+### Install `serve` globally to serve built output
+
 ```zsh
 yarn global add serve
 ```
 
-### 6. Serve production output
+### Serve production output
+
 ```zsh
 serve dist
 ```
