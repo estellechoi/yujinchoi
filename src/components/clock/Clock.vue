@@ -7,7 +7,7 @@
 						v-if="item.show"
 						:class="$style.clockHand"
 						:type="item.type"
-						:time="getClockTime"
+						:time="currentTime"
 						:size="clockHandSize"
 					/>
 				</div>
@@ -18,7 +18,6 @@
 
 <script lang="ts">
 	import { defineComponent, PropType } from 'vue'
-	import { mapGetters } from 'vuex'
 	import ClockHand from '@/components/clock/ClockHand.vue' // @ is an alias to /src
 	import { ClockSize, ClockHandMeta } from '@/components/clock/types'
 	import utils from '@/utils/index'
@@ -50,11 +49,11 @@
 		},
 		data() {
 			return {
+				currentTime: this.time,
 				interval: 0,
 			}
 		},
 		computed: {
-			...mapGetters('clock', ['getClockTime']),
 			clockHandMetas(): ClockHandMeta[] {
 				return [
 					{
@@ -78,17 +77,18 @@
 				return this.size / 50
 			},
 		},
+		emits: {
+			update(payload: { newTime: Date }) {
+				return payload.newTime
+			},
+		},
 		created() {
-			this.initClock()
+			if (this.isLive) this.startClockInterval(this.time)
 		},
 		beforeUnmounted() {
 			if (this.interval) this.clearClockInterval()
 		},
 		methods: {
-			initClock() {
-				this.updateTime(this.time)
-				if (this.isLive) this.startClockInterval(this.time)
-			},
 			startClockInterval(startTime: Date) {
 				let currentTime = startTime
 				this.interval = window.setInterval(() => {
@@ -96,8 +96,11 @@
 					this.updateTime(currentTime)
 				}, 1000)
 			},
-			updateTime(newTime: Date) {
-				this.$store.commit('clock/SET_CLOCK_TIME', newTime)
+			updateTime(time: Date) {
+				this.currentTime = time
+				this.$emit('update', {
+					newTime: this.currentTime,
+				})
 			},
 			clearClockInterval() {
 				window.clearInterval(this.interval)

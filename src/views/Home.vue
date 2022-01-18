@@ -8,6 +8,7 @@
 			:is-live="true"
 			:show-minute-hand="true"
 			:show-second-hand="true"
+			@update="handleClockUpdate"
 			@mouseover="showTooltip"
 			@mousemove="updateTooltipPosition"
 			@mouseout="hideTooltip"
@@ -53,6 +54,9 @@
 			},
 		},
 		methods: {
+			handleClockUpdate(data: { newTime: Date }) {
+				this.$store.commit('clock/SET_CLOCK_TIME', data.newTime)
+			},
 			updateTooltipPosition(evt: MouseEvent) {
 				this.tooltipX = evt.clientX
 				this.tooltipY = evt.clientY
